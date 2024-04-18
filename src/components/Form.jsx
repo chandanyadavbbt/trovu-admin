@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import './form.css'; // Import your CSS file for styling
+import {toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const Form = ({ onClose, onUpload, setFormPopup }) => {
     const [name, setName] = useState('');
@@ -17,8 +19,20 @@ const Form = ({ onClose, onUpload, setFormPopup }) => {
     const handleSubmit = async () => {
       // Check if file and name are set
       if (!file || !name) {
+        toast.error("Name or file not provided",{
+          position: "top-center",
+          autoClose: 3000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "dark",
+
+        })
           console.error('Name or file not provided');
-          return;
+          // setFormPopup(false)
+        return
       }
   
       // Create form data
@@ -27,27 +41,34 @@ const Form = ({ onClose, onUpload, setFormPopup }) => {
       formData.append('username', name); // Assuming the backend expects 'username' instead of 'name'
   
       try {
-          const response = await fetch('https://0f7e-2409-4081-2c92-b0a9-b4c5-398a-8b19-e29e.ngrok-free.app/upload', {
+          const response = await fetch('https://b600-2401-4900-1c42-8fff-00-31e-79ed.ngrok-free.app/upload', {
               method: 'POST',
               body: formData // Pass formData directly as the body
           });
+          console.log(response.ok,"this is response")
   
           if (response.ok) {
               const data = await response.json();
               console.log('File uploaded successfully:', data);
+            //   toast.success("File uploaded successfully")
+              // setFormPopup(false)
               // Optionally, you can call a function passed as prop to handle successful upload
-              if (onUpload) {
-                  onUpload(data); // Assuming onUpload is a function passed as prop
-              }
-              // Close the popup form
+              // if (onUpload) {
+              //     onUpload(data); // Assuming onUpload is a function passed as prop
+              // }
+             
               setFormPopup(false);
+              
           } else {
               console.error('Failed to upload file');
           }
       } catch (error) {
+          setFormPopup(false)
           console.error('Error uploading file:', error);
+          console.log(error)
       }
   };
+  
   
     return (
         <div className="popup-form-container">
@@ -68,6 +89,8 @@ const Form = ({ onClose, onUpload, setFormPopup }) => {
                     />
                 </div>
                 <button className="upload-btn" onClick={handleSubmit}>Submit</button>
+            {/* <button onClick={notify}>Notify!</button> */}
+            
             </div>
         </div>
     );

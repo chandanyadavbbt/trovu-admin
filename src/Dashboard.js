@@ -25,7 +25,7 @@ const Dashboard = ({setFormPopup}) => {
   // ---------------------------------
     useEffect(()=>{
       async function getTableData (){
-        const response = await fetch("https://0f7e-2409-4081-2c92-b0a9-b4c5-398a-8b19-e29e.ngrok-free.app/trovu/data",{
+        const response = await fetch("https://b600-2401-4900-1c42-8fff-00-31e-79ed.ngrok-free.app/trovu/data",{
           method: "get",
           headers: new Headers({
             "ngrok-skip-browser-warning": "69420",
@@ -80,7 +80,7 @@ const Dashboard = ({setFormPopup}) => {
     item.Username.toLowerCase().includes(searchQuery.toLowerCase())
   );
   // console.log(filter)
-  console.log(filteredTableData, "i am filter data ")
+  // console.log(filteredTableData, "i am filter data ")
   
   // Function to handle download
   // const handleDownload = (documentName) => {
