@@ -41,10 +41,12 @@ const Form = ({ onClose, onUpload, setFormPopup }) => {
       formData.append('username', name); // Assuming the backend expects 'username' instead of 'name'
   
       try {
-          const response = await fetch('https://b600-2401-4900-1c42-8fff-00-31e-79ed.ngrok-free.app/upload', {
+          toast.success("Data Uploading...")
+          const response = await fetch('https://8605-2401-4900-1c42-8fff-00-31e-79ed.ngrok-free.app/upload', {
               method: 'POST',
               body: formData // Pass formData directly as the body
           });
+
           console.log(response.ok,"this is response")
   
           if (response.ok) {

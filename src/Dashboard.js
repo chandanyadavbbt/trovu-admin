@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import Modal from 'react-modal';
 import Form from "./components/Form"
+import { toast } from 'react-toastify';
 // import { Form } from 'react-router-dom';
 // import { toast } from 'react-toastify';
+const url = "https://8605-2401-4900-1c42-8fff-00-31e-79ed.ngrok-free.app"
 
 
 const Dashboard = ({setFormPopup}) => {
@@ -10,6 +12,7 @@ const Dashboard = ({setFormPopup}) => {
   const [showModal, setShowModal] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [tableData1,setTableData1]=useState([])
+  const [selectedDocument, setSelectedDocument] = useState(null);
 
   const rowsPerPage = 5;
 
@@ -24,19 +27,47 @@ const Dashboard = ({setFormPopup}) => {
 
   // ---------------------------------
     useEffect(()=>{
-      async function getTableData (){
-        const response = await fetch("https://b600-2401-4900-1c42-8fff-00-31e-79ed.ngrok-free.app/trovu/data",{
+    //   async function getTableData (){
+    //     // try {
+          
+    //     // } catch (error) {
+    //     //   console.log(error)
+          
+    //     // }
+    //     const response = await fetch(`${url}/trovu/data`,{
+    //       method: "get",
+    //       headers: new Headers({
+    //         "ngrok-skip-browser-warning": "69420",
+    //       })
+    //     })
+    //       const data = await response.json()
+    //       // console.log("this is data table ",data)
+    //       setTableData1(data)
+        
+    //   }
+    //   getTableData()
+    async function getTableData() {
+      try {
+        const response = await fetch(`${url}/trovu/data`, {
           method: "get",
           headers: new Headers({
             "ngrok-skip-browser-warning": "69420",
-          })
-        })
-          const data = await response.json()
-          console.log("this is data table ",data)
-          setTableData1(data)
-        
+          }),
+        });
+        if (!response.ok) {
+          throw new Error("Failed to fetch data 1");
+        }
+        const data = await response.json();
+        setTableData1(data);
+      } catch (error) {
+        toast.error("Fail to fetch check connection")
+        console.error("Error fetching table data:", error);
+        // Handle error here, such as displaying a message to the user
       }
-      getTableData()
+    }
+    
+    // Call the function
+    getTableData();
     },[])
     // console.log(tableData1,"this is table data")
 
@@ -132,9 +163,39 @@ const Dashboard = ({setFormPopup}) => {
   const triggerFileInputClick = () => {
     document.getElementById('file-upload').click();
   };
+
+  // handle deleted function
+  const handleDelete = async (document) => {
+    console.log(document.Filename)
+    
+    try {
+      const response = await fetch(`${url}/delete_file`, {
+        method: 'DELETE',
+        body: JSON.stringify({
+          id: document.id,
+          username: document.Username,
+          filename: document.Filename,
+        }),
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+      if (response.ok) {
+        // Handle successful deletion
+        console.log('Document deleted successfully');
+      } else {
+        // Handle deletion failure
+        console.error('Failed to delete document');
+      }
+    } catch (error) {
+      console.error('Error deleting document:', error);
+    }
+  };
+
   
   // JSX
   return (
+    <>
     
     <div className="dashboard">
       <div className="search-upload-delete-row">
@@ -176,7 +237,7 @@ const Dashboard = ({setFormPopup}) => {
             strokeLinecap="round"
             strokeLinejoin="round"
             className="feather feather-upload"
-          >
+            >
             <path d="M12 5v14M5 12l7-7 7 7" />
           </svg>
           <span className="upload-text">Upload Document</span>
@@ -199,7 +260,7 @@ const Dashboard = ({setFormPopup}) => {
             strokeLinecap="round"
             strokeLinejoin="round"
             className="feather feather-delete"
-          >
+            >
             <polyline points="3 6 5 6 21 6" />
             <path d="M5 6L5 21a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2L19 6" />
             <path d="M9 6V3a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v3" />
@@ -225,7 +286,15 @@ const Dashboard = ({setFormPopup}) => {
                   {/* <input type='checkbox'/> */}
                   </td>
 
-                  <td className='document-cell' dangerouslySetInnerHTML={{ __html: row.Filename}}></td>
+                  {/* <td className='document-cell' dangerouslySetInnerHTML={{ __html: row.Filename}}></td> */}
+                  <td className='document-cell' onMouseEnter={() => setSelectedDocument(row)} onMouseLeave={() => setSelectedDocument(null)}>
+  <div dangerouslySetInnerHTML={{ __html: row.Filename }}></div>
+  {selectedDocument === row && (
+    <button className="delete-button" onClick={() => handleDelete(row)}>Delete</button>
+
+  
+  )}
+</td>
                   <td>
                     <button className="download-button" onClick={() => handleDownload(row.Filename)}>
                       <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" width="40" height="40" stroke="currentColor" class="w-6 h-6">
@@ -271,7 +340,15 @@ const Dashboard = ({setFormPopup}) => {
      
     </div>
       
+    </>
   );
 };
 
 export default Dashboard;
+
+
+// remove components from here and make seprate components
+
+
+
+// JS and DSA 12 days 
