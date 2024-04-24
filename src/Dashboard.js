@@ -2,12 +2,13 @@ import React, { useEffect, useState } from 'react';
 import Modal from 'react-modal';
 import Form from "./components/Form"
 import { toast } from 'react-toastify';
+import NavigationBar from './NavigationBar';
 // import { Form } from 'react-router-dom';
 // import { toast } from 'react-toastify';
-const url = "https://8605-2401-4900-1c42-8fff-00-31e-79ed.ngrok-free.app"
+const url = "https://2918-2401-4900-1c42-8fff-00-347-6f77.ngrok-free.app/"
 
 
-const Dashboard = ({setFormPopup}) => {
+const Dashboard = ({setFormPopup,ngrokURL}) => {
   const [currentPage, setCurrentPage] = useState(1);
   const [showModal, setShowModal] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
@@ -24,7 +25,8 @@ const Dashboard = ({setFormPopup}) => {
     { name: 'Orion Stone', documents: 'Name of document- vasista.pdf<br>Date of upload- 24/mar/2024' },
     { name: 'Celeste Montgomery', documents: 'Name of document- kausalya.pdf<br>Date of upload- 29/mar/2024' },
   ];
-
+  
+    const kibanaUrl = 'https://f5a3-2401-4900-1c42-8fff-00-347-6f77.ngrok-free.app';
   // ---------------------------------
     useEffect(()=>{
     //   async function getTableData (){
@@ -48,7 +50,7 @@ const Dashboard = ({setFormPopup}) => {
     //   getTableData()
     async function getTableData() {
       try {
-        const response = await fetch(`${url}/trovu/data`, {
+        const response = await fetch(`${ngrokURL}/trovu/data`, {
           method: "get",
           headers: new Headers({
             "ngrok-skip-browser-warning": "69420",
@@ -74,31 +76,31 @@ const Dashboard = ({setFormPopup}) => {
   // ---------------------------------
 
   // Function to handle file upload
-  const handleFileUpload = async (event) => {
-    const file = event.target.files[0]; 
-    if (!file) {
-      console.error('No file selected');
-      return;
-    }
+  // const handleFileUpload = async (event) => {
+  //   const file = event.target.files[0]; 
+  //   if (!file) {
+  //     console.error('No file selected');
+  //     return;
+  //   }
   
-    const formData = new FormData(); 
-    formData.append('file', file); 
+  //   const formData = new FormData(); 
+  //   formData.append('file', file); 
   
-    try {
-      const response = await fetch('https://0f7e-2409-4081-2c92-b0a9-b4c5-398a-8b19-e29e.ngrok-free.app/upload', {
-        method: 'POST',
-        body: formData
-      });
+  //   try {
+  //     const response = await fetch('https://0f7e-2409-4081-2c92-b0a9-b4c5-398a-8b19-e29e.ngrok-free.app/upload', {
+  //       method: 'POST',
+  //       body: formData
+  //     });
   
-      // Handle successful upload
-      const data = await response.json();
-      alert("successfull")
-      console.log('File uploaded successfully:', data);
-    } catch (error) {
-      // Handle error
-      console.error('Error uploading file:', error);
-    }
-  };
+  //     // Handle successful upload
+  //     const data = await response.json();
+  //     alert("successfull")
+  //     console.log('File uploaded successfully:', data);
+  //   } catch (error) {
+  //     // Handle error
+  //     console.error('Error uploading file:', error);
+  //   }
+  // };
   
   // Function to handle search
   const handleSearch = (query) => {
@@ -165,38 +167,88 @@ const Dashboard = ({setFormPopup}) => {
   };
 
   // handle deleted function
-  const handleDelete = async (document) => {
-    console.log(document.Filename)
-    
-    try {
-      const response = await fetch(`${url}/delete_file`, {
-        method: 'DELETE',
-        body: JSON.stringify({
-          id: document.id,
-          username: document.Username,
-          filename: document.Filename,
-        }),
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      });
-      if (response.ok) {
-        // Handle successful deletion
-        console.log('Document deleted successfully');
-      } else {
-        // Handle deletion failure
-        console.error('Failed to delete document');
-      }
-    } catch (error) {
-      console.error('Error deleting document:', error);
+  // handle deleted function
+// const handleDelete = async (document) => {
+//   console.log(document)
+  
+//   try {
+//     const response = await fetch(`${url}delete_file`, {
+//       method: 'DELETE',
+//       body: JSON.stringify({
+//         id: document.id,
+//         username: document.Username,
+//         filename: document.Filename,
+//         date: document.date
+//       }),
+//       headers: {
+//         'Content-Type': 'application/json',
+//       },
+//     });
+//     if (response.ok) {
+//       // Handle successful deletion
+//       console.log('Document deleted successfully');
+//     } else {
+//       // Handle deletion failure
+//       console.error('Failed to delete document');
+//     }
+//   } catch (error) {
+//     console.error('Error deleting document:', error);
+//   }
+// };
+const handleDelete = async (document) => {
+  console.log(document);
+  
+  // Parse the date string into a Date object
+  const parsedDate = new Date(document.date);
+  
+  // Extract the year, month, and day from the Date object
+  const year = parsedDate.getFullYear();
+  const month = (parsedDate.getMonth() + 1).toString().padStart(2, "0");
+  const day = parsedDate.getDate().toString().padStart(2, "0");
+  
+  // Concatenate the year, month, and day with no separator
+  const formattedDate = `${year}${month}${day}`;
+  
+  try {
+    alert("Are you sure ?")
+    const response = await fetch(`${ngrokURL}delete_file`, {
+      method: 'DELETE',
+      body: JSON.stringify({
+        id: document.id,
+        username: document.Username,
+        filename: document.Filename,
+        date: formattedDate  // Use the formatted date here
+      }),
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+    if (response.ok) {
+      // Handle successful deletion
+      console.log('Document deleted successfully');
+      window.location.reload()
+    } else {
+      // Handle deletion failure
+      console.error('Failed to delete document');
     }
-  };
+  } catch (error) {
+    console.error('Error deleting document:', error);
+  }
+};
+function handleSearchKibana(){
+  window.location.href="http://www.google.com"
+}
+
 
   
   // JSX
   return (
     <>
-    
+     <div className="navigation-wrapper">
+        <NavigationBar />
+      </div>
+      <div className="content">
+
     <div className="dashboard">
       <div className="search-upload-delete-row">
         <div className="search-bar">
@@ -211,7 +263,7 @@ const Dashboard = ({setFormPopup}) => {
             strokeLinecap="round"
             strokeLinejoin="round"
             className="feather feather-search"
-          >
+            >
             <circle cx="11" cy="11" r="8" />
             <line x1="21" y1="21" x2="16.65" y2="16.65" />
           </svg>
@@ -222,7 +274,7 @@ const Dashboard = ({setFormPopup}) => {
             value={searchQuery}
             onChange={handleChange}
             onKeyPress={handleKeyPress}
-          />
+            />
           {/* <button onClick={handleSearch}>Search</button> */}
         </div>
         <div className="upload-container" onClick={setFormPopup}>
@@ -245,27 +297,15 @@ const Dashboard = ({setFormPopup}) => {
             type="file"
             id="file-upload"
             style={{ display: 'none' }}
-            onChange={handleFileUpload}
-          />
+            // onChange={handleFileUpload}
+            />
         </div>
         <div className="delete-container">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="24"
-            height="24"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="1.2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            className="feather feather-delete"
-            >
-            <polyline points="3 6 5 6 21 6" />
-            <path d="M5 6L5 21a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2L19 6" />
-            <path d="M9 6V3a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v3" />
-          </svg>
-          <span className="delete-text">Delete</span>
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+  <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z" />
+</svg>
+
+          <span onClick={handleSearchKibana} className="delete-text">Search Documents</span>
         </div>
       </div>
       
@@ -290,15 +330,15 @@ const Dashboard = ({setFormPopup}) => {
                   <td className='document-cell' onMouseEnter={() => setSelectedDocument(row)} onMouseLeave={() => setSelectedDocument(null)}>
   <div dangerouslySetInnerHTML={{ __html: row.Filename }}></div>
   {selectedDocument === row && (
-    <button className="delete-button" onClick={() => handleDelete(row)}>Delete</button>
-
-  
+    <h1 className="delete-button" onClick={() => handleDelete(row)}>Delete</h1>
+    
+    
   )}
 </td>
                   <td>
                     <button className="download-button" onClick={() => handleDownload(row.Filename)}>
                       <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" width="40" height="40" stroke="currentColor" class="w-6 h-6">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m.75 12 3 3m0 0 3-3m-3 3v-6m-1.5-9H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z" />
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m.75 12 3 3m0 0 3-3m-3 3v-6m-1.5-9H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z" />
                       </svg>
                     </button>
                   </td>
@@ -328,7 +368,7 @@ const Dashboard = ({setFormPopup}) => {
             backgroundColor: '#E5F0F8',
           }
         }}
-      >
+        >
         <h2>Download Confirmation</h2>
         <p>Do you want to download the document?</p>
         <div className="modal-buttons">
@@ -339,6 +379,7 @@ const Dashboard = ({setFormPopup}) => {
      
      
     </div>
+        </div>
       
     </>
   );

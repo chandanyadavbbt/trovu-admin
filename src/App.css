@@ -350,3 +350,11 @@ button:hover {
 .delete-text{
   font-weight: 50;
 }
+.delete-button{
+  font-size: 16px;
+  padding: 5px;
+  background-color: black;
+  width: 50px;
+  color: white;
+  cursor: pointer;
+}

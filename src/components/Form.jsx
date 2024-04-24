@@ -3,7 +3,7 @@ import './form.css'; // Import your CSS file for styling
 import {toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
-const Form = ({ onClose, onUpload, setFormPopup }) => {
+const Form = ({ onClose, onUpload, setFormPopup ,ngrokURL}) => {
     const [name, setName] = useState('');
     const [file, setFile] = useState(null);
 
@@ -21,7 +21,7 @@ const Form = ({ onClose, onUpload, setFormPopup }) => {
       if (!file || !name) {
         toast.error("Name or file not provided",{
           position: "top-center",
-          autoClose: 3000,
+          autoClose: 1000,
           hideProgressBar: false,
           closeOnClick: true,
           pauseOnHover: true,
@@ -42,7 +42,7 @@ const Form = ({ onClose, onUpload, setFormPopup }) => {
   
       try {
           toast.success("Data Uploading...")
-          const response = await fetch('https://8605-2401-4900-1c42-8fff-00-31e-79ed.ngrok-free.app/upload', {
+          const response = await fetch(`${ngrokURL}/upload`, {
               method: 'POST',
               body: formData // Pass formData directly as the body
           });
