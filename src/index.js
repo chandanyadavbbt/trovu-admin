@@ -6,6 +6,7 @@ import reportWebVitals from './reportWebVitals';
 import { ToastContainer } from 'react-toastify';
 import Login from './pages/Login';
 import { BrowserRouter } from 'react-router-dom';
+import DeleteModal from './components/DeleteModal';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
@@ -25,6 +26,7 @@ root.render(
     
     />
     <App />
+    {/* <DeleteModal/> */}
     {/* <Login/> */}
     <ToastContainer/>
   </React.StrictMode>
