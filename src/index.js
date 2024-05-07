@@ -25,9 +25,9 @@ root.render(
     theme="dark"
     
     />
-    <App />
+    {/* <App /> */}
     {/* <DeleteModal/> */}
-    {/* <Login/> */}
+    <Login/>
     <ToastContainer/>
   </React.StrictMode>
     </BrowserRouter>
